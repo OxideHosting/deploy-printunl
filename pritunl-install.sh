@@ -72,7 +72,7 @@ enabled=1' | sudo -E tee /etc/yum.repos.d/pritunl.repo >/dev/null 2>&1
     systemctl enable --now pritunl
   fi
   server_ip=$(curl -s http://checkip.amazonaws.com)
-  domain_record=$(dig +short "${HOSTNAMEE}")
+  domain_record=$(dig +short "${HOSTNAME}")
   if [ "${server_ip}" = "${domain_record}" ]; then
     echo "You can access the Pritunl panel using the following link - https://$HOSTNAME"
   else
