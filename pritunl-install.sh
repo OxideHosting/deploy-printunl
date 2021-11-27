@@ -1,7 +1,4 @@
 preflight(){
-  #↓Deletes the script↓#
-  rm -- "$0"
-  #↑Deletes the script↑#
   if [ -r /etc/os-release ]; then
     lsb_dist="$(. /etc/os-release && echo "$ID")"
     dist_version="$(. /etc/os-release && echo "$VERSION_ID")"
@@ -74,6 +71,13 @@ enabled=1' | sudo -E tee /etc/yum.repos.d/pritunl.repo >/dev/null 2>&1
     sudo systemctl disable ufw.service nginx.service httpd.service apache.service
     sudo yum install -y mongodb-org pritunl
     systemctl enable --now pritunl
+    server_ip=$(curl -s http://checkip.amazonaws.com)
+    domain_record=$(dig +short "${HOSTNAMEE}")
+    if [ "${server_ip}" = "${domain_record}" ]; then
+      echo "You can access the Pritunl panel using the following link - https://$HOSTNAME"
+    else
+      echo "You can access the Pritunl panel using the following link - https://$server_ip"
+    fi
   fi
 }
 
