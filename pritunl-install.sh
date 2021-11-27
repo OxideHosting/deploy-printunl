@@ -15,7 +15,6 @@ preflight(){
 install(){
   if [ "$lsb_dist" = "ubuntu" ] || [ "$lsb_dist" = "debian" ]; then
     apt-get install -y sudo gnupg
-    sh -c "DEBIAN_FRONTEND=noninteractive apt-get upgrade -y"
     codename="$(. /etc/os-release && echo "$VERSION_CODENAME")"
     if [ "$lsb_dist" = "ubuntu" ]; then
       echo "deb http://repo.mongodb.org/apt/ubuntu $codename/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
@@ -71,13 +70,13 @@ enabled=1' | sudo -E tee /etc/yum.repos.d/pritunl.repo >/dev/null 2>&1
     sudo systemctl disable ufw.service nginx.service httpd.service apache.service
     sudo yum install -y mongodb-org pritunl
     systemctl enable --now pritunl
-    server_ip=$(curl -s http://checkip.amazonaws.com)
-    domain_record=$(dig +short "${HOSTNAMEE}")
-    if [ "${server_ip}" = "${domain_record}" ]; then
-      echo "You can access the Pritunl panel using the following link - https://$HOSTNAME"
-    else
-      echo "You can access the Pritunl panel using the following link - https://$server_ip"
-    fi
+  fi
+  server_ip=$(curl -s http://checkip.amazonaws.com)
+  domain_record=$(dig +short "${HOSTNAMEE}")
+  if [ "${server_ip}" = "${domain_record}" ]; then
+    echo "You can access the Pritunl panel using the following link - https://$HOSTNAME"
+  else
+    echo "You can access the Pritunl panel using the following link - https://$server_ip"
   fi
 }
 
