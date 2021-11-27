@@ -18,6 +18,7 @@ preflight(){
 install(){
   if [ "$lsb_dist" = "ubuntu" ] || [ "$lsb_dist" = "debian" ]; then
     apt-get install -y sudo gnupg
+    sh -c "DEBIAN_FRONTEND=noninteractive apt-get upgrade -y"
     codename="$(. /etc/os-release && echo "$VERSION_CODENAME")"
     if [ "$lsb_dist" = "ubuntu" ]; then
       echo "deb http://repo.mongodb.org/apt/ubuntu $codename/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
@@ -31,9 +32,8 @@ install(){
     sudo systemctl disable ufw.service nginx.service httpd.service apache.service
     sudo apt-get --assume-yes install apt-transport-https
     sudo apt-get update
-    sudo apt-get install -y mongodb-org
-    echo 'pritunl' | sudo -E tee -a /etc/rc.local >/dev/null 2>&1
-    reboot
+    sudo apt-get install -y mongodb-org pritunl
+    systemctl enable --now pritunl
   elif [ "$lsb_dist" = "centos" ]; then
     yum install -y sudo
 echo "[mongodb-org-4.4]
@@ -54,8 +54,7 @@ enabled=1' | sudo -E tee /etc/yum.repos.d/pritunl.repo >/dev/null 2>&1
     sudo systemctl stop ufw.service nginx.service httpd.service apache.service
     sudo systemctl disable ufw.service nginx.service httpd.service apache.service
     sudo yum install -y mongodb-org pritunl
-    echo 'pritunl' | sudo -E tee -a /etc/rc.local >/dev/null 2>&1
-    reboot
+    systemctl enable --now pritunl
   elif [ "$lsb_dist" = "fedora" ]; then
     yum install sudo -y
 echo '[mongodb-org-4.4]
@@ -74,8 +73,7 @@ enabled=1' | sudo -E tee /etc/yum.repos.d/pritunl.repo >/dev/null 2>&1
     sudo systemctl stop ufw.service nginx.service httpd.service apache.service
     sudo systemctl disable ufw.service nginx.service httpd.service apache.service
     sudo yum install -y mongodb-org pritunl
-    echo 'pritunl' | sudo -E tee -a /etc/rc.local >/dev/null 2>&1
-    reboot
+    systemctl enable --now pritunl
   fi
 }
 
