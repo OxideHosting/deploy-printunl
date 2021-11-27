@@ -29,7 +29,6 @@ install(){
     sudo apt-get --assume-yes install apt-transport-https
     sudo apt-get update
     sudo apt-get install -y mongodb-org pritunl
-    systemctl enable --now pritunl
   elif [ "$lsb_dist" = "centos" ]; then
     yum install -y sudo
 echo "[mongodb-org-4.4]
@@ -50,7 +49,6 @@ enabled=1' | sudo -E tee /etc/yum.repos.d/pritunl.repo >/dev/null 2>&1
     sudo systemctl stop ufw.service nginx.service httpd.service apache.service
     sudo systemctl disable ufw.service nginx.service httpd.service apache.service
     sudo yum install -y mongodb-org pritunl
-    systemctl enable --now pritunl
   elif [ "$lsb_dist" = "fedora" ]; then
     yum install sudo -y
 echo '[mongodb-org-4.4]
@@ -69,8 +67,8 @@ enabled=1' | sudo -E tee /etc/yum.repos.d/pritunl.repo >/dev/null 2>&1
     sudo systemctl stop ufw.service nginx.service httpd.service apache.service
     sudo systemctl disable ufw.service nginx.service httpd.service apache.service
     sudo yum install -y mongodb-org pritunl
-    systemctl enable --now pritunl
   fi
+  systemctl enable --now pritunl mongod
   server_ip=$(curl -s http://checkip.amazonaws.com)
   domain_record=$(dig +short "${HOSTNAME}")
   if [ "${server_ip}" = "${domain_record}" ]; then
