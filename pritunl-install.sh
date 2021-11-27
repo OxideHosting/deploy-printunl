@@ -31,8 +31,9 @@ install(){
     sudo systemctl disable ufw.service nginx.service httpd.service apache.service
     sudo apt-get --assume-yes install apt-transport-https
     sudo apt-get update
-    sudo apt-get install -y mongodb-org dnsuilts socat
-    systemctl enable --now pritunl
+    sudo apt-get install -y mongodb-org
+    echo 'pritunl' | sudo -E tee -a /etc/rc.local >/dev/null 2>&1
+    reboot
   elif [ "$lsb_dist" = "centos" ]; then
     yum install -y sudo
 echo "[mongodb-org-4.4]
@@ -52,8 +53,9 @@ enabled=1' | sudo -E tee /etc/yum.repos.d/pritunl.repo >/dev/null 2>&1
     sudo yum -y remove iptables-services
     sudo systemctl stop ufw.service nginx.service httpd.service apache.service
     sudo systemctl disable ufw.service nginx.service httpd.service apache.service
-    sudo yum install -y mongodb-org pritunl bind-utils socat
-    systemctl enable --now pritunl
+    sudo yum install -y mongodb-org pritunl
+    echo 'pritunl' | sudo -E tee -a /etc/rc.local >/dev/null 2>&1
+    reboot
   elif [ "$lsb_dist" = "fedora" ]; then
     yum install sudo -y
 echo '[mongodb-org-4.4]
@@ -71,15 +73,9 @@ enabled=1' | sudo -E tee /etc/yum.repos.d/pritunl.repo >/dev/null 2>&1
     gpg --armor --export 7568D9BB55FF9E5287D586017AE645C0CF8E292A > key.tmp; sudo rpm --import key.tmp; rm -f key.tmp
     sudo systemctl stop ufw.service nginx.service httpd.service apache.service
     sudo systemctl disable ufw.service nginx.service httpd.service apache.service
-    sudo yum install -y mongodb-org pritunl bind-utils socat
-    systemctl enable --now pritunl
-    server_ip=$(curl -s http://checkip.amazonaws.com)
-    domain_record=$(dig +short "${HOSTNAME}")
-    if [ "${server_ip}" = "${domain_record}" ]; then
-      echo "You can access the Pritunl panel using the following link - https://$HOSTNAME"
-    else
-      echo "You can access the Pritunl panel using the following link - https://$server_ip"
-    fi
+    sudo yum install -y mongodb-org pritunl
+    echo 'pritunl' | sudo -E tee -a /etc/rc.local >/dev/null 2>&1
+    reboot
   fi
 }
 
