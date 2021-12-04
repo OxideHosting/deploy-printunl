@@ -14,7 +14,8 @@ preflight(){
 
 install(){
   if [ "$lsb_dist" = "ubuntu" ] || [ "$lsb_dist" = "debian" ]; then
-    apt-get install -y sudo gnupg
+    apt-get update
+    apt-get install -y sudo gnupg dnsutils
     codename="$(. /etc/os-release && echo "$VERSION_CODENAME")"
     if [ "$lsb_dist" = "ubuntu" ]; then
       echo "deb http://repo.mongodb.org/apt/ubuntu $codename/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
@@ -30,6 +31,7 @@ install(){
     sudo apt-get update
     sudo apt-get install -y mongodb-org pritunl
   elif [ "$lsb_dist" = "centos" ]; then
+    yum update -y
     yum install -y sudo
 echo "[mongodb-org-4.4]
 name=MongoDB Repository
@@ -50,6 +52,7 @@ enabled=1' | sudo -E tee /etc/yum.repos.d/pritunl.repo >/dev/null 2>&1
     sudo systemctl disable ufw.service nginx.service httpd.service apache.service
     sudo yum install -y mongodb-org pritunl
   elif [ "$lsb_dist" = "fedora" ]; then
+    yum updae -y
     yum install sudo -y
 echo '[mongodb-org-4.4]
 name=MongoDB Repository
