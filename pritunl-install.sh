@@ -28,8 +28,9 @@ install(){
     sudo systemctl stop ufw.service nginx.service httpd.service apache.service
     sudo systemctl disable ufw.service nginx.service httpd.service apache.service
     sudo apt-get --assume-yes install apt-transport-https
-    sudo apt-get update
-    sudo apt-get install -y mongodb-org pritunl
+sudo sh -c "echo 'deb http://deb.debian.org/debian buster-backports main contrib non-free' > /etc/apt/sources.list.d/buster-backports.list"
+    sudo apt-get update -y
+    sudo apt-get install -y mongodb-org pritunl wireguard
   elif [ "$lsb_dist" = "centos" ]; then
     yum update -y
     yum install -y sudo
@@ -50,9 +51,13 @@ enabled=1' | sudo -E tee /etc/yum.repos.d/pritunl.repo >/dev/null 2>&1
     sudo yum -y remove iptables-services
     sudo systemctl stop ufw.service nginx.service httpd.service apache.service
     sudo systemctl disable ufw.service nginx.service httpd.service apache.service
-    sudo yum install -y mongodb-org pritunl
+    sudo yum install -y elrepo-release epel-release
+    if [ "$dist_version" = "7" ]; then
+        sudoyum install -y yum-plugin-elrepo
+    fi
+    sudo yum install -y mongodb-org pritunl kmod-wireguard wireguard-tools
   elif [ "$lsb_dist" = "fedora" ]; then
-    yum updae -y
+    yum update -y
     yum install sudo -y
 echo '[mongodb-org-4.4]
 name=MongoDB Repository
@@ -69,7 +74,8 @@ enabled=1' | sudo -E tee /etc/yum.repos.d/pritunl.repo >/dev/null 2>&1
     gpg --armor --export 7568D9BB55FF9E5287D586017AE645C0CF8E292A > key.tmp; sudo rpm --import key.tmp; rm -f key.tmp
     sudo systemctl stop ufw.service nginx.service httpd.service apache.service
     sudo systemctl disable ufw.service nginx.service httpd.service apache.service
-    sudo yum install -y mongodb-org pritunl
+    sudo yum install -y elrepo-release epel-release
+    sudo yum install -y mongodb-org pritunl kmod-wireguard wireguard-tools
   fi
   systemctl enable --now pritunl mongod
   server_ip=$(curl -s http://checkip.amazonaws.com)
