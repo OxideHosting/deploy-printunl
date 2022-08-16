@@ -11,6 +11,14 @@ preflight(){
       lsb_dist="centos"
     fi
     dist_version="8"
+  elif [ "$lsb_dist" = "ubuntu" ] || [ "$lsb_dist" = "debian" ]; then
+      if [ "$dist_version" = "22" ]; then
+        echo "Ubuntu 22.04 is not currently supported by Pritunl, exiting..."
+        exit 2
+      elif [ "$dist_version" = "11" ]; then
+        echo "Debian 11 is not currently supported by Pritunl, exiting..."
+        exit 2
+      fi
   fi
 }
 
@@ -20,17 +28,17 @@ install(){
     apt-get install -y sudo gnupg dnsutils
     codename="$(. /etc/os-release && echo "$VERSION_CODENAME")"
     if [ "$lsb_dist" = "ubuntu" ]; then
-      echo "deb http://repo.mongodb.org/apt/ubuntu $codename/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+      echo "deb [ trusted=yes arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu $codename/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
     else
-      echo "deb http://repo.mongodb.org/apt/debian $codename/mongodb-org/4.4 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+      echo "deb [ trusted=yes arch=amd64,arm64 ] https://repo.mongodb.org/apt/debian $codename/mongodb-org/6.0 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
     fi
-    echo "deb https://repo.pritunl.com/stable/apt $codename main" | sudo -E tee /etc/apt/sources.list.d/pritunl.list >/dev/null 2>&1
+    echo "deb [ trusted=yes ] https://repo.pritunl.com/stable/apt $codename main" | sudo -E tee /etc/apt/sources.list.d/pritunl.list >/dev/null 2>&1
     sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
-    wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
+    wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | sudo apt-key add -
     sudo systemctl stop ufw.service nginx.service httpd.service apache.service
     sudo systemctl disable ufw.service nginx.service httpd.service apache.service
     sudo apt-get --assume-yes install apt-transport-https
-sudo sh -c "echo 'deb http://deb.debian.org/debian buster-backports main contrib non-free' > /etc/apt/sources.list.d/buster-backports.list"
+    sudo sh -c "echo 'deb [ trusted=yes ] https://deb.debian.org/debian buster-backports main contrib non-free' > /etc/apt/sources.list.d/buster-backports.list"
     sudo apt-get update -y
     sudo apt-get install -y mongodb-org pritunl wireguard
   elif [ "$lsb_dist" = "centos" ] || [ "$lsb_dist" = "fedora" ]; then
