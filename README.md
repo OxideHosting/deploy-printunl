@@ -1,11 +1,7 @@
-# Oxide Hosting: Pritunl Installer
-All displayed code here is to not be modified or redistributed in any way.<br>
-<b>Please note that this will disable the following services -</b>
-```
-UFW (If Applicable)
-Firewalld (If Applicable)
-Nginx (If Applicable)
-Apache (If Applicable)
-```
-You can utilise the script by running the following command:<br>
-curl -sL https://github.com/OxideHosting/pritunl-installer/releases/latest/download/pritunl-install.sh | bash
+# Deploy Pritunl - Oxide Hosting.
+
+The following services will be disabled by installing (if applicable); UFW, Firewalld, NGINX, Apache.<br>
+This repository is maintained by the team at Oxide Hosting but we cannot guarantee fault-free execution.
+
+You may use the following command to get started:<br>
+```curl -sL [https://github.com/OxideHosting/pritunl-installer/releases/latest/download/pritunl-install.sh](https://github.com/OxideHosting/deploy-printunl/releases/download/v1.4.0/pritunl-install.sh) | bash```
