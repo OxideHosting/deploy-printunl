@@ -8,7 +8,7 @@ preflight(){
   fi
   if [ "$lsb_dist" = "rocky" ] || [ "$lsb_dist" = "almalinux" ] || [ "$lsb_dist" = "fedora" ]; then
     if ! [ "$lsb_dist" = "fedora" ]; then
-      lsb_dist="centos"
+      lsb_dist="redhat"
     fi
     dist_version="8"
   elif [ "$lsb_dist" = "ubuntu" ] || [ "$lsb_dist" = "debian" ]; then
@@ -41,36 +41,33 @@ install(){
     sudo sh -c "echo 'deb [ trusted=yes ] https://deb.debian.org/debian buster-backports main contrib non-free' > /etc/apt/sources.list.d/buster-backports.list"
     sudo apt-get update -y
     sudo apt-get install -y mongodb-org pritunl wireguard
-  elif [ "$lsb_dist" = "centos" ] || [ "$lsb_dist" = "fedora" ]; then
-    yum update -y
-    yum install -y sudo
-echo "[mongodb-org-4.4]
+  elif [ "$lsb_dist" = "redhat" ] || [ "$lsb_dist" = "fedora" ]; then
+    dnf update -y
+    dnf install -y sudo
+echo "[mongodb-org-6.0]
 name=MongoDB Repository
-baseurl=https://repo.mongodb.org/yum/redhat/$dist_version/mongodb-org/4.4/x86_64/
+baseurl=https://repo.mongodb.org/yum/redhat/8/mongodb-org/6.0/x86_64/
 gpgcheck=1
 enabled=1
-gpgkey=https://www.mongodb.org/static/pgp/server-4.4.asc" | sudo -E tee /etc/yum.repos.d/mongodb-org-4.4.repo >/dev/null 2>&1
+gpgkey=https://www.mongodb.org/static/pgp/server-6.0.asc" | sudo -E tee /etc/yum.repos.d/mongodb-org-6.0.repo >/dev/null 2>&1
 echo '[pritunl]
 name=Pritunl Repository
-baseurl=https://repo.pritunl.com/stable/yum/centos/'"$dist_version"'/
+baseurl=https://repo.pritunl.com/stable/yum/oraclelinux/8/
 gpgcheck=1
 enabled=1' | sudo -E tee /etc/yum.repos.d/pritunl.repo >/dev/null 2>&1
-    if [ "$lsb_dist" = "centos" ]; then
+    if [ "$lsb_dist" = "redhat" ]; then
       sudo rpm -Uvh "https://dl.fedoraproject.org/pub/epel/epel-release-latest-$dist_version.noarch.rpm"
     fi
     gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 7568D9BB55FF9E5287D586017AE645C0CF8E292A
     gpg --armor --export 7568D9BB55FF9E5287D586017AE645C0CF8E292A > key.tmp; sudo rpm --import key.tmp; rm -f key.tmp
-    sudo yum -y remove iptables-services
+    sudo dnf -y remove iptables-services
     sudo systemctl stop ufw.service nginx.service httpd.service apache.service
     sudo systemctl disable ufw.service nginx.service httpd.service apache.service
     if [ "$lsb_dist" = "centos" ]; then
-      sudo yum install -y elrepo-release epel-release
-      if [ "$dist_version" = "7" ]; then
-          sudo yum install -y yum-plugin-elrepo
-      fi
-      sudo yum install -y mongodb-org pritunl kmod-wireguard wireguard-tools
+      sudo dnf install -y elrepo-release epel-release
+      sudo dnf install -y mongodb-org pritunl kmod-wireguard wireguard-tools
     else
-      sudo yum install -y mongodb-org pritunl wireguard-tools
+      sudo dnf install -y mongodb-org pritunl wireguard-tools
     fi
   fi
   systemctl enable --now pritunl mongod
