@@ -43,7 +43,7 @@ install(){
     sudo apt-get install -y mongodb-org pritunl wireguard
   elif [ "$lsb_dist" = "redhat" ] || [ "$lsb_dist" = "fedora" ]; then
     dnf update -y
-    dnf install -y sudo
+    dnf install -y sudo bind-utils
 echo "[mongodb-org-6.0]
 name=MongoDB Repository
 baseurl=https://repo.mongodb.org/yum/redhat/8/mongodb-org/6.0/x86_64/
