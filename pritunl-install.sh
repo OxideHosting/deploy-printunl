@@ -67,7 +67,7 @@ enabled=1' | sudo -E tee /etc/yum.repos.d/pritunl.repo >/dev/null 2>&1
       sudo dnf install -y elrepo-release epel-release
       sudo dnf install -y mongodb-org pritunl kmod-wireguard wireguard-tools
     else
-      sudo yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm https://www.elrepo.org/elrepo-release-8.el8.elrepo.noarch.rpm
+      sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm https://www.elrepo.org/elrepo-release-8.el8.elrepo.noarch.rpm
       sudo dnf install -y mongodb-org pritunl kmod-wireguard wireguard-tools
     fi
   fi
